@@ -1,0 +1,120 @@
+#include <iostream>
+using namespace std;
+void welcome();
+int chooseSize, fieldSize, mine_check = 0, win_check = 0;
+const int field_size = 10;
+bool mines[field_size][field_size];
+char field[field_size][field_size];
+
+void field_build(char symb = '*') {
+	for (int i = 0; i < field_size; ++i) {
+		for (int j = 0; j < field_size; ++j) {
+			field[i][j] = symb;
+			mines[i][j] = 0;
+		}
+	}
+}
+
+void mine_set(int mine_count = 10) {
+	for (int i = 0; i < mine_count;) {
+		int x = rand() % field_size;
+		int y = rand() % field_size;
+		if (!mines[x][y]) {
+			mines[x][y] = 1;
+			++i;
+		}
+	}
+}
+
+void field_out() {
+	system("cls");
+	cout << "  ";
+for (int i = 0; i < field_size; ++i) {
+		cout << i << ' ';
+	}
+	cout << "\n --------------------\n";
+for (int i = 0; i < field_size; ++i) {
+		cout << (char)(i + 65) << "|";
+		for (int j = 0; j < field_size; ++j) {
+			cout << field[i][j] << ' ';
+		}
+		cout << endl;
+	}
+}
+
+bool shot(int x, int y) {
+	int cnt = 0;
+	if (mines[x][y])
+		return false;
+
+	for (int i = x - 1; i <= x + 1 && i < field_size; ++i) {
+		for (int j = y - 1; j <= y + 1 && j < field_size; ++j) {
+			if (i >= 0 && j >= 0)
+				cnt += mines[i][j];
+		}
+	}
+	field[x][y] = cnt + 0x30;
+	return true;
+}
+
+void game() {
+	int y;
+	char x;
+	mine_set();
+	do {
+		field_out();
+		cout << "\nUSE FOLLOWING FORMAT - A7\n";
+		cout << "\nMAKE YOUR CHOICE:";
+		cin >> x >> y;
+		x = x - 65;
+	} while (shot(x, y));
+	cout << endl;
+	cout << "\nGAME OVER";
+	return;
+}
+
+void aboutGame()
+{
+	system("cls");
+	cout << "Saper is simple:\n";
+	cout << "* Uncover a mine, and the game ends\n";
+	cout << "* Uncover an empty square, and you keep playing\n";
+	cout << "* Uncover a number, and it tells you how many mines lay hidden in the eight surrounding squares-information you use to deduce which nearby squares are safe to click\n";
+	cout << "\n1. Return to Main Menu\n";
+	cout << "READ ALL RULES CAREFULLY AND CHOOSE AN APPROPRIATE OPTION : \n";
+	int goBack;
+	cin >> goBack;
+	if (goBack == 1)
+		welcome();
+	else
+		cout << "ERROR\n";
+	aboutGame();
+}
+
+void welcome() 
+{
+	system("cls");
+	cout << "MINESWEEPER\n"<< endl;
+	cout << "Main Menu\n"<< endl;
+	cout << "1. Play\n";
+	cout << "2. How to play\n";
+	cout << "3. Quit\n";
+	cout << "\nCHOOSE ONE OF THE OPTIONS:\n";
+	int menuChoose;
+	cin >> menuChoose;
+	switch (menuChoose)
+	{
+	case 1: game(); break;
+	case 2: aboutGame(); break;
+	case 3: return;
+	default:cout << "ERROR\n" << "MAKE SURE THAT YOU ENTERED NUMBER THAT IS IN POSSIBLE OPTIONS\n";
+	}
+	welcome();
+}
+
+int main() 
+{
+	field_build();
+	welcome();
+	return 0;
+}
